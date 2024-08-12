@@ -1,0 +1,58 @@
+---
+title: "stl_lead_inequity.qmd"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+# attach packages
+library(tidyverse)
+library(janitor)
+```
+
+
+```{r}
+# read in data, clean up with janitor
+
+stl_lead <- read_csv(here::here("data", "stl_blood_lead.csv"))
+janitor::clean_names(stl_lead)
+
+```
+
+```{r}
+# basic data exploration
+skimr::skim(stl_lead)
+dim(stl_lead)
+head(stl_lead)
+tail(stl_lead)
+names(stl_lead)
+```
+
+
+```{r}
+# new data frame
+stl_lead_prop <- stl_lead %>% mutate(stl_lead_prop = (stl_lead$white / stl_lead$totalPop)*100)
+view(stl_lead_prop)
+```
+
+```{r}
+# create scatterplot
+
+stl_lead_plot <- ggplot(data=stl_lead, aes(x=pctElevated, y=stl_lead_prop$stl_lead_prop)) + 
+  geom_point(color="red") + 
+  theme_minimal() + 
+  labs(title = "Percentage of Children vs White Identifying Population with Elevated Blood Lead Levels",  x="children", y="white population")
+
+stl_lead_plot
+```
+
+Children below the age of 10 are very likely to have elevated blood lead levels
+
+```{r}
+# histogram
+ggplot(data=stl_lead, aes(x=pctElevated, fill = ..x..)) + geom_histogram() + scale_fill_gradient2("Legend",
+low = "blue",
+high = "red")
+```
+
